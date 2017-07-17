@@ -8,27 +8,25 @@ import Foundation
 
 class APIHelper {
     static func rejectNil(_ source: [String:Any?]) -> [String:Any]? {
-        var destination = [String:Any]()
-        for (key, nillableValue) in source {
-            if let value: Any = nillableValue {
-                destination[key] = value
-            }
+        let result = source.reduce([String:Any]()) { (dict, tuple:(key: String, value: Any?)) -> [String:Any] in
+            guard let value = tuple.value else { return dict }
+            var dict = dict
+            dict.updateValue(value, forKey: tuple.key)
+            return dict
         }
-
-        if destination.isEmpty {
-            return nil
-        }
-        return destination
+        
+        if result.isEmpty { return nil }
+        return result
     }
-
+    
     static func rejectNilHeaders(_ source: [String:Any?]) -> [String:String] {
-        var destination = [String:String]()
-        for (key, nillableValue) in source {
-            if let value: Any = nillableValue {
-                destination[key] = "\(value)"
-            }
+        let result = source.reduce([String:String]()) { (dict, tuple:(key: String, value: Any?)) -> [String:String] in
+            guard let value = tuple.value else { return dict }
+            var dict = dict
+            dict.updateValue("\(value)", forKey: tuple.key)
+            return dict
         }
-        return destination
+        return result
     }
 
     static func convertBoolToString(_ source: [String: Any]?) -> [String:Any]? {
@@ -48,7 +46,7 @@ class APIHelper {
         }
         return destination
     }
-
+    
     static func mapValuesToQueryItems(values: [String:Any?]) -> [URLQueryItem]? {
         let returnValues = values
             .filter { $0.1 != nil }
@@ -68,12 +66,8 @@ class APIHelper {
                 }
             }
             .flatMap { $0 }
-
-        if returnValues.count == 0 {
-            return nil
-        }
-
+ 
+        if returnValues.isEmpty { return nil }
         return returnValues
     }
-
 }
