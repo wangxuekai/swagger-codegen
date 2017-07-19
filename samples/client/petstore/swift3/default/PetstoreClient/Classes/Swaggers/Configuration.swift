@@ -5,7 +5,7 @@
 //
 
 import Foundation
-
+import {}
 open class Configuration {
 	
 	// This value is used to configure the date formatter that is used to serialize dates into JSON format. 
